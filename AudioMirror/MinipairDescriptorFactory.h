@@ -12,6 +12,10 @@ private:
 
 	static ENDPOINT_MINIPAIR m_MicrophoneTemplate;
 	static ENDPOINT_MINIPAIR m_SpeakerTemplate;
+
+	static ENDPOINT_MINIPAIR m_MicrophoneTemplate2;
+	static ENDPOINT_MINIPAIR m_SpeakerTemplate2;
+
 	static void SetLastCharacterOfString(PWSTR string, int valueToSet);
 
 	MinipairDescriptorFactory();
@@ -19,6 +23,8 @@ private:
 public:
 	static NTSTATUS CreateSpeaker(_Outptr_ ENDPOINT_MINIPAIR ** pMinipair);
 	static NTSTATUS CreateMicrophone(_Outptr_ ENDPOINT_MINIPAIR** pMinipair);
-	
+
+	static NTSTATUS CreateSpeaker2(_Outptr_ ENDPOINT_MINIPAIR** pMinipair);
+	static NTSTATUS CreateMicrophone2(_Outptr_ ENDPOINT_MINIPAIR** pMinipair);
 };
 

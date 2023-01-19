@@ -17,6 +17,11 @@ class AdapterCommon : public IAdapterCommon, public CUnknown
 		NTSTATUS InstallVirtualMic(IRP* Irp, IUnknown** unknownMiniport);
 		NTSTATUS InstallVirtualSpeaker(IRP* Irp, IUnknown** unknownMiniport);
 		NTSTATUS InstallVirtualCable(IRP* irp);
+
+		NTSTATUS InstallVirtualMic2(IRP* Irp, IUnknown** unknownMiniport);
+		NTSTATUS InstallVirtualSpeaker2(IRP* Irp, IUnknown** unknownMiniport);
+		NTSTATUS InstallVirtualCable2(IRP* irp);
+
 	public:
 		DECLARE_STD_UNKNOWN()
 		AdapterCommon(PUNKNOWN unknown) : CUnknown(unknown) {};

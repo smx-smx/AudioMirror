@@ -122,6 +122,16 @@ NTSTATUS __stdcall AdapterCommon::Init(IRP* StartupIrp, PDEVICE_OBJECT DeviceObj
 		m_pPhysicalDeviceObject = NULL;
 	}
 
+	ntStatus = InstallVirtualCable2(StartupIrp);
+	IF_FAILED_ACTION_RETURN(ntStatus, DPF(D_TERSE, ("InstallVirtualCable2 failed, 0x%x", ntStatus)));
+
+	if (!NT_SUCCESS(ntStatus))
+	{
+		m_pDeviceObject = NULL;
+		if (m_pDeviceHelper) ExFreePoolWithTag(m_pDeviceHelper, MINIADAPTER_POOLTAG);
+		m_pPhysicalDeviceObject = NULL;
+	}
+
 	return ntStatus;
 }
 
@@ -140,7 +150,7 @@ NTSTATUS AdapterCommon::InstallVirtualCable(IRP * irp)
 	ntStatus = unknownMic->QueryInterface(IID_MiniportWaveRT, (PVOID*)&microphone);
 	MiniportWaveRT* speaker;
 	ntStatus = unknownSpeaker->QueryInterface(IID_MiniportWaveRT, (PVOID*)&speaker);
-	microphone->SetPairedMiniport(speaker);
+	speaker->SetPairedMiniport(microphone);
 
 	return STATUS_SUCCESS;
 }
@@ -177,6 +187,58 @@ NTSTATUS AdapterCommon::InstallVirtualSpeaker(IRP* Irp, IUnknown** unknownMinipo
 	return ntStatus;
 }
 
+
+NTSTATUS AdapterCommon::InstallVirtualCable2(IRP * irp)
+{
+	NTSTATUS ntStatus = STATUS_SUCCESS;
+	IUnknown* unknownMic;
+	IUnknown* unknownSpeaker;
+
+	ntStatus = InstallVirtualMic2(irp, &unknownMic);
+	IF_FAILED_ACTION_RETURN(ntStatus, DPF(D_TERSE, ("InstallVirtualMic failed, 0x%x", ntStatus)));
+	ntStatus = InstallVirtualSpeaker2(irp, &unknownSpeaker);
+	IF_FAILED_ACTION_RETURN(ntStatus, DPF(D_TERSE, ("InstallVirtualSpeaker failed, 0x%x", ntStatus)));
+
+	MiniportWaveRT* microphone;
+	ntStatus = unknownMic->QueryInterface(IID_MiniportWaveRT, (PVOID*)&microphone);
+	MiniportWaveRT* speaker;
+	ntStatus = unknownSpeaker->QueryInterface(IID_MiniportWaveRT, (PVOID*)&speaker);
+	speaker->SetPairedMiniport(microphone);
+
+	return STATUS_SUCCESS;
+}
+
+NTSTATUS AdapterCommon::InstallVirtualMic2(IRP* Irp, IUnknown** unknownMiniport)
+{
+	PAGED_CODE();
+	NTSTATUS ntStatus = STATUS_NOT_IMPLEMENTED;
+
+	ENDPOINT_MINIPAIR* pCaptureMiniport = NULL;
+	ntStatus = MinipairDescriptorFactory::CreateMicrophone2(&pCaptureMiniport);
+	if (!NT_SUCCESS(ntStatus)) 
+	{
+		return ntStatus;
+	}
+	m_pDeviceHelper->InstallMinipair(Irp, pCaptureMiniport, NULL, NULL, NULL, NULL, unknownMiniport);
+
+	return ntStatus;
+}
+
+NTSTATUS AdapterCommon::InstallVirtualSpeaker2(IRP* Irp, IUnknown** unknownMiniport)
+{
+	PAGED_CODE();
+	NTSTATUS ntStatus = STATUS_NOT_IMPLEMENTED;
+
+	ENDPOINT_MINIPAIR* pRenderMiniport = NULL;
+	ntStatus = MinipairDescriptorFactory::CreateSpeaker2(&pRenderMiniport);
+	if (!NT_SUCCESS(ntStatus))
+	{
+		return ntStatus;
+	}
+	m_pDeviceHelper->InstallMinipair(Irp, pRenderMiniport, NULL, NULL, NULL, NULL, unknownMiniport);
+
+	return ntStatus;
+}
 
 
 STDMETHODIMP AdapterCommon::NonDelegatingQueryInterface

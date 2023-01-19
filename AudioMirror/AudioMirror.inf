@@ -37,9 +37,16 @@ AudioMirror.sys  = 1,,
 Include=ks.inf,wdmaudio.inf
 Needs=KS.Registration, WDMAUDIO.Registration
 CopyFiles=Drivers_Dir
+AddReg=PinNameRegistration
 
 [Drivers_Dir]
 AudioMirror.sys
+
+[PinNameRegistration]
+HKR,%MEDIA_CATEGORIES%\%MicInputNameGUID%,Name,,%MicInputName%
+HKR,%MEDIA_CATEGORIES%\%MicOutputNameGUID%,Name,,%MicOutputName%
+HKR,%MEDIA_CATEGORIES%\%SpkInputNameGUID%,Name,,%SpkInputName%
+HKR,%MEDIA_CATEGORIES%\%SpkOutputNameGUID%,Name,,%SpkOutputName%
 
 ;-------------- Service installation
 [AudioMirror_Device.NT.Services]
@@ -54,7 +61,7 @@ ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\AudioMirror.sys
 
 
-; ------------- Capture device
+; ------------- Capture device1
 [AudioMirror.Interface.WaveCaptureTemplate]
 AddReg=AudioMirror.Interface.WaveCaptureTemplate.AddReg
 
@@ -72,7 +79,7 @@ HKR,,FriendlyName,,%AudioMirror.TopologyCapture.FriendlyName%
 HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
 HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
 
-; ------------- Render device
+; ------------- Render device1
 [AudioMirror.Interface.WaveRenderTemplate]
 AddReg=AudioMirror.Interface.WaveRenderTemplate.AddReg
 [AudioMirror.Interface.WaveRenderTemplate.AddReg]
@@ -81,6 +88,7 @@ HKR,,FriendlyName,,%AudioMirror.WaveRender.FriendlyName%
 
 [AudioMirror.Interface.TopologyRenderTemplate]
 AddReg=AudioMirror.Interface.TopologyRenderTemplate.AddReg
+
 [AudioMirror.Interface.TopologyRenderTemplate.AddReg]
 HKR,,CLSID,,%KSProxy.CLSID%
 HKR,,FriendlyName,,%AudioMirror.TopologyRender.FriendlyName%
@@ -88,22 +96,71 @@ HKR,,FriendlyName,,%AudioMirror.TopologyRender.FriendlyName%
 HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
 HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
 
+; ------------- Capture device2
+[AudioMirror.Interface.WaveCaptureTemplate2]
+AddReg=AudioMirror.Interface.WaveCaptureTemplate2.AddReg
+
+[AudioMirror.Interface.WaveCaptureTemplate2.AddReg]
+HKR,,CLSID,,%KSProxy.CLSID%
+HKR,,FriendlyName,,%AudioMirror.WaveCapture.FriendlyName2%
+
+[AudioMirror.Interface.TopologyCaptureTemplate2]
+AddReg=AudioMirror.Interface.TopologyCaptureTemplate2.AddReg
+
+[AudioMirror.Interface.TopologyCaptureTemplate2.AddReg]
+HKR,,CLSID,,%KSProxy.CLSID%
+HKR,,FriendlyName,,%AudioMirror.TopologyCapture.FriendlyName2%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
+
+; ------------- Render device2
+[AudioMirror.Interface.WaveRenderTemplate2]
+AddReg=AudioMirror.Interface.WaveRenderTemplate2.AddReg
+
+[AudioMirror.Interface.WaveRenderTemplate2.AddReg]
+HKR,,CLSID,,%KSProxy.CLSID%
+HKR,,FriendlyName,,%AudioMirror.WaveRender.FriendlyName2%
+
+[AudioMirror.Interface.TopologyRenderTemplate2]
+AddReg=AudioMirror.Interface.TopologyRenderTemplate2.AddReg
+
+[AudioMirror.Interface.TopologyRenderTemplate2.AddReg]
+HKR,,CLSID,,%KSProxy.CLSID%
+HKR,,FriendlyName,,%AudioMirror.TopologyRender.FriendlyName2%
+; The following lines opt-in to pull mode.
+HKR,EP\0,%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_ANY%
+HKR,EP\0,%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,0x1
 
 [AudioMirror_Device.NT.Interfaces]
 ; -------------- Interface template definition
-; Capture
+; Capture1
 AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_WaveCapture%, AudioMirror.Interface.WaveCaptureTemplate
 AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveCapture%, AudioMirror.Interface.WaveCaptureTemplate
 AddInterface=%KSCATEGORY_CAPTURE%,  %KSNAME_WaveCapture%, AudioMirror.Interface.WaveCaptureTemplate
 AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_TopologyCapture%, AudioMirror.Interface.TopologyCaptureTemplate
 AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologyCapture%, AudioMirror.Interface.TopologyCaptureTemplate
 
-; Render
+; Capture2
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_WaveCapture2%, AudioMirror.Interface.WaveCaptureTemplate2
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveCapture2%, AudioMirror.Interface.WaveCaptureTemplate2
+AddInterface=%KSCATEGORY_CAPTURE%,  %KSNAME_WaveCapture2%, AudioMirror.Interface.WaveCaptureTemplate2
+AddInterface=%KSCATEGORY_AUDIO%,    %KSNAME_TopologyCapture2%, AudioMirror.Interface.TopologyCaptureTemplate2
+AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologyCapture2%, AudioMirror.Interface.TopologyCaptureTemplate2
+
+; Render1
 AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_WaveRender%, AudioMirror.Interface.WaveRenderTemplate
 AddInterface=%KSCATEGORY_RENDER%, %KSNAME_WaveRender%, AudioMirror.Interface.WaveRenderTemplate
 AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveRender%, AudioMirror.Interface.WaveRenderTemplate
 AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_TopologyRender%, AudioMirror.Interface.TopologyRenderTemplate
 AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologyRender%, AudioMirror.Interface.TopologyRenderTemplate
+
+; Render2
+AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_WaveRender2%, AudioMirror.Interface.WaveRenderTemplate2
+AddInterface=%KSCATEGORY_RENDER%, %KSNAME_WaveRender2%, AudioMirror.Interface.WaveRenderTemplate2
+AddInterface=%KSCATEGORY_REALTIME%, %KSNAME_WaveRender2%, AudioMirror.Interface.WaveRenderTemplate2
+AddInterface=%KSCATEGORY_AUDIO%, %KSNAME_TopologyRender2%, AudioMirror.Interface.TopologyRenderTemplate2
+AddInterface=%KSCATEGORY_TOPOLOGY%, %KSNAME_TopologyRender2%, AudioMirror.Interface.TopologyRenderTemplate2
 
 [AudioMirror_Device.NT.Wdf]
 KmdfService =  AudioMirror, AudioMirror_wdfsect
@@ -121,15 +178,41 @@ AudioMirror.SVCDESC="AudioMirror Service"
 AudioMirror.WaveCapture.FriendlyName="AudioMirror Wave Input"
 AudioMirror.TopologyCapture.FriendlyName="AudioMirror Topology Input"
 
+AudioMirror.WaveCapture.FriendlyName2="AudioMirror Wave Input2"
+AudioMirror.TopologyCapture.FriendlyName2="AudioMirror Topology Input2"
+
 AudioMirror.WaveRender.FriendlyName="AudioMirror Wave Output"
 AudioMirror.TopologyRender.FriendlyName="AudioMirror Topology Output"
+
+AudioMirror.WaveRender.FriendlyName2="AudioMirror Wave Output2"
+AudioMirror.TopologyRender.FriendlyName2="AudioMirror Topology Output2"
+
+MEDIA_CATEGORIES = "MediaCategories"
+
+MicOutputNameGUID = {15a31160-df6b-4f89-80b0-9bb81259115c}
+SpkOutputNameGUID = {9919ca3f-29ca-4728-bbb7-07cdf682e248}
+
+MicInputNameGUID = {618ad392-bec0-4b2d-bd89-e505e169dd55}
+SpkInputNameGUID = {1c7320d9-2fce-4214-94fd-ac1acff4122a}
+
+MicInputName = "JJOC MIC Output hidden" ; render
+MicOutputName = "JJOC MIC"              ; capture
+
+SpkInputName = "JJOC SPK"               ; render
+SpkOutputName = "JJOC SPK Input hidden" ; capture
 
 ;non-localizable
 KSNAME_WaveCapture="WaveCaptureTemplate"
 KSNAME_TopologyCapture="TopologyCaptureTemplate"
 
+KSNAME_WaveCapture2="WaveCaptureTemplate2"
+KSNAME_TopologyCapture2="TopologyCaptureTemplate2"
+
 KSNAME_WaveRender="WaveRenderTemplate"
 KSNAME_TopologyRender="TopologyRenderTemplate"
+
+KSNAME_WaveRender2="WaveRenderTemplate2"
+KSNAME_TopologyRender2="TopologyRenderTemplate2"
 
 KSNODETYPE_ANY   = "{00000000-0000-0000-0000-000000000000}"
 

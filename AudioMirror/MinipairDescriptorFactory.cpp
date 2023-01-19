@@ -68,6 +68,50 @@ ENDPOINT_MINIPAIR MinipairDescriptorFactory::m_SpeakerTemplate =
 	NULL, 0, NULL,
 };
 
+ENDPOINT_MINIPAIR MinipairDescriptorFactory::m_MicrophoneTemplate2 =
+{
+	DeviceType::CaptureDevice,
+	L"TopologyCapture-1",                       // make sure this or the template name matches with KSNAME_TopologyMicIn in the inf's [Strings] section 
+	L"TopologyCaptureTemplate2",                                   // optional template name
+	MiniportTopology::Create,
+	&MicInTopoMiniportFilterDescriptor2,
+	0, NULL,                                // Interface properties
+	L"WaveCapture-1",                           // make sure this or the template name matches with KSNAME_WaveMicIn in the inf's [Strings] section
+	L"WaveCaptureTemplate2",                                   // optional template name
+	MiniportWaveRT::Create,
+	&MicInWaveMiniportFilterDescriptor,
+	0, NULL,                                // Interface properties
+	MICIN_DEVICE_MAX_CHANNELS,
+	MicInPinDeviceFormatsAndModes,
+	SIZEOF_ARRAY(MicInPinDeviceFormatsAndModes),
+	MicInTopologyPhysicalConnections,
+	SIZEOF_ARRAY(MicInTopologyPhysicalConnections),
+	ENDPOINT_FLAG_NONE,
+	NULL, 0, NULL,                          // audio module settings.
+};
+
+ENDPOINT_MINIPAIR MinipairDescriptorFactory::m_SpeakerTemplate2 =
+{
+	DeviceType::RenderDevice,
+	L"TopologyRender-1",            // make sure this or the template name matches with KSNAME_TopologySpeakerHeadphone in the inf's [Strings] section 
+	L"TopologyRenderTemplate2",                                   // optional template name
+	MiniportTopology::Create,
+	&SpeakerTopoMiniportFilterDescriptor2,
+	0, NULL,                                // Interface properties
+	L"WaveRender-1",                // make sure this or the template name matches with KSNAME_WaveSpeakerHeadphone in the inf's [Strings] section
+	L"WaveRenderTemplate2",                                   // optional template name
+	MiniportWaveRT::Create,
+	&SpeakerWaveMiniportFilterDescriptor,
+	0, NULL,                                // Interface properties
+	SPEAKER_DEVICE_MAX_CHANNELS,
+	SpeakerPinDeviceFormatsAndModes,
+	SIZEOF_ARRAY(SpeakerPinDeviceFormatsAndModes),
+	SpeakerTopologyPhysicalConnections,
+	SIZEOF_ARRAY(SpeakerTopologyPhysicalConnections),
+	ENDPOINT_FLAG_NONE,
+	NULL, 0, NULL,
+};
+
 NTSTATUS MinipairDescriptorFactory::CreateSpeaker(_Outptr_ ENDPOINT_MINIPAIR** pMinipair)
 {
 	ENDPOINT_MINIPAIR* pNewMinipair = new(NonPagedPoolNx, MINIADAPTER_POOLTAG) ENDPOINT_MINIPAIR;
@@ -116,4 +160,51 @@ NTSTATUS MinipairDescriptorFactory::CreateMicrophone(_Outptr_ ENDPOINT_MINIPAIR*
 	*/
 }
 
+NTSTATUS MinipairDescriptorFactory::CreateSpeaker2(_Outptr_ ENDPOINT_MINIPAIR** pMinipair)
+{
+	ENDPOINT_MINIPAIR* pNewMinipair = new(NonPagedPoolNx, MINIADAPTER_POOLTAG) ENDPOINT_MINIPAIR;
+	if (!pNewMinipair)
+	{
+		*pMinipair = NULL;
+		return STATUS_INSUFFICIENT_RESOURCES;
+	}
+	*pNewMinipair = m_SpeakerTemplate2;
+
+	MinipairDescriptorFactory::SetLastCharacterOfString(pNewMinipair->TopoName, m_CurrentIndex);
+	MinipairDescriptorFactory::SetLastCharacterOfString(pNewMinipair->WaveName, m_CurrentIndex);
+	//TODO: check if correct
+
+	*pMinipair = pNewMinipair;
+	m_CurrentIndex = m_CurrentIndex + 1;
+
+	return STATUS_SUCCESS;
+	/*
+	ENDPOINT_MINIPAIR* pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(ENDPOINT_MINIPAIR), MINIADAPTER_POOLTAG);
+	RtlCopyMemory(pNewMinipair, &m_MicrophoneTemplate, sizeof(ENDPOINT_MINIPAIR));
+	*/
+}
+
+NTSTATUS MinipairDescriptorFactory::CreateMicrophone2(_Outptr_ ENDPOINT_MINIPAIR** pMinipair)
+{
+	ENDPOINT_MINIPAIR* pNewMinipair = new(NonPagedPoolNx, MINIADAPTER_POOLTAG) ENDPOINT_MINIPAIR;
+	if (!pNewMinipair)
+	{
+		*pMinipair = NULL;
+		return STATUS_INSUFFICIENT_RESOURCES;
+	}
+	*pNewMinipair = m_MicrophoneTemplate2;
+
+	MinipairDescriptorFactory::SetLastCharacterOfString(pNewMinipair->TopoName, m_CurrentIndex);
+	MinipairDescriptorFactory::SetLastCharacterOfString(pNewMinipair->WaveName, m_CurrentIndex);
+	//TODO: check if correct
+
+	*pMinipair = pNewMinipair;
+	m_CurrentIndex = m_CurrentIndex + 1;
+
+	return STATUS_SUCCESS;
+	/*
+	ENDPOINT_MINIPAIR* pNewMinipair = (ENDPOINT_MINIPAIR*)ExAllocatePoolWithTag(NonPagedPoolNx, sizeof(ENDPOINT_MINIPAIR), MINIADAPTER_POOLTAG);
+	RtlCopyMemory(pNewMinipair, &m_MicrophoneTemplate, sizeof(ENDPOINT_MINIPAIR));
+	*/
+}
 
