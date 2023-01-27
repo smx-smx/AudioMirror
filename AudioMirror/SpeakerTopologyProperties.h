@@ -80,7 +80,7 @@ PCPIN_DESCRIPTOR SpeakerTopoMiniportPins[] =
 		SpeakerTopoPinDataRangePointersBridge,            // DataRanges
 		KSPIN_DATAFLOW_OUT,                               // DataFlow
 		KSPIN_COMMUNICATION_NONE,                         // Communication
-		&KSNODETYPE_SPEAKER,                              // Category
+		&KSNODETYPE_COMMUNICATION_SPEAKER,                              // Category
 		&MIC_INPUT_NAME,                                  // Name
 		0                                                 // Reserved
 	  }
@@ -125,7 +125,7 @@ PCPIN_DESCRIPTOR SpeakerTopoMiniportPins2[] =
 		SpeakerTopoPinDataRangePointersBridge,            // DataRanges
 		KSPIN_DATAFLOW_OUT,                               // DataFlow
 		KSPIN_COMMUNICATION_NONE,                         // Communication
-		&KSNODETYPE_SPEAKER,                              // Category
+		&KSNODETYPE_COMMUNICATION_SPEAKER,                              // Category
 		&SPK_INPUT_NAME,                                  // Name
 		0                                                 // Reserved
 	  }
