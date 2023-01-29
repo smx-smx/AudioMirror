@@ -2,6 +2,8 @@
 
 #include "Globals.h"
 
+#define JJOC_SPK_SAMPLE_RATE						48000
+
 #define SPEAKER_DEVICE_MAX_CHANNELS               2       // Max Channels.
 
 #define SPEAKER_MAX_INPUT_SYSTEM_STREAMS            1
@@ -11,8 +13,8 @@
 #define SPEAKER_HOST_MAX_CHANNELS                   2       // Max Channels.
 #define SPEAKER_HOST_MIN_BITS_PER_SAMPLE            16      // Min Bits Per Sample
 #define SPEAKER_HOST_MAX_BITS_PER_SAMPLE            16      // Max Bits Per Sample
-#define SPEAKER_HOST_MIN_SAMPLE_RATE                44100   // Min Sample Rate
-#define SPEAKER_HOST_MAX_SAMPLE_RATE                44100   // Max Sample Rate
+#define SPEAKER_HOST_MIN_SAMPLE_RATE                JJOC_SPK_SAMPLE_RATE	// Min Sample Rate
+#define SPEAKER_HOST_MAX_SAMPLE_RATE                JJOC_SPK_SAMPLE_RATE	// Max Sample Rate
 
 #define SPEAKER_OFFLOAD_MAX_CHANNELS                2       // Max Channels.
 #define SPEAKER_OFFLOAD_MIN_BITS_PER_SAMPLE         16      // Min Bits Per Sample
@@ -36,11 +38,11 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
 		{
 			{
 				WAVE_FORMAT_EXTENSIBLE,
-				2,
-				44100,
-				176400,
-				4,
-				16,
+				2,	// nChannels
+				JJOC_SPK_SAMPLE_RATE,
+				JJOC_SPK_SAMPLE_RATE * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,	// nBlockAlign = nChannel * bitPerSample / 8
+				16,	// bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
 			},
 			16,

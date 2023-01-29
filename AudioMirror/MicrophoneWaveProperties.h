@@ -9,11 +9,14 @@
 //
 // Mic in (external: headphone) range.
 //
+
+#define JJOC_MIC_SAMPLE_RATE				48000
+
 #define MICIN_DEVICE_MAX_CHANNELS           2       // Max Channels.
 #define MICIN_MIN_BITS_PER_SAMPLE_PCM       16      // Min Bits Per Sample
 #define MICIN_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
-#define MICIN_MIN_SAMPLE_RATE               44100    // Min Sample Rate
-#define MICIN_MAX_SAMPLE_RATE               44100   // Max Sample Rate
+#define MICIN_MIN_SAMPLE_RATE               JJOC_MIC_SAMPLE_RATE	// Min Sample Rate
+#define MICIN_MAX_SAMPLE_RATE               JJOC_MIC_SAMPLE_RATE	// Max Sample Rate
 
 //
 // Max # of pin instances.
@@ -37,11 +40,11 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicInPinSupportedDeviceFormats[] =
 		{
 			{
 				WAVE_FORMAT_EXTENSIBLE,
-				2,
-				44100,
-				176400,
-				4,
-				16,
+				2,	// nChannel
+				JJOC_MIC_SAMPLE_RATE,
+				JJOC_MIC_SAMPLE_RATE * 4,	// JJOC_MIC_SAMPLE_RATE * nBlockAlign
+				4,	// nBlockAlign = nChannel * bitPerSample / 8
+				16,	// bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
 			},
 			16,
