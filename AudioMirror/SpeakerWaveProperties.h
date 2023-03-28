@@ -2,28 +2,15 @@
 
 #include "Globals.h"
 
-#define JJOC_SPK_SAMPLE_RATE						48000
-
-#define SPEAKER_DEVICE_MAX_CHANNELS               2       // Max Channels.
-
-#define SPEAKER_MAX_INPUT_SYSTEM_STREAMS            1
-#define SPEAKER_MAX_INPUT_OFFLOAD_STREAMS           0
-#define SPEAKER_MAX_OUTPUT_LOOPBACK_STREAMS         MAX_OUTPUT_LOOPBACK_STREAMS
-
-#define SPEAKER_HOST_MAX_CHANNELS                   2       // Max Channels.
+#define SPEAKER_MAX_INPUT_SYSTEM_STREAMS            2
+#define SPEAKER_DEVICE_MAX_CHANNELS                 2       // Max Channels.
 #define SPEAKER_HOST_MIN_BITS_PER_SAMPLE            16      // Min Bits Per Sample
 #define SPEAKER_HOST_MAX_BITS_PER_SAMPLE            16      // Max Bits Per Sample
-#define SPEAKER_HOST_MIN_SAMPLE_RATE                JJOC_SPK_SAMPLE_RATE	// Min Sample Rate
-#define SPEAKER_HOST_MAX_SAMPLE_RATE                JJOC_SPK_SAMPLE_RATE	// Max Sample Rate
+#define SPEAKER_HOST_MIN_SAMPLE_RATE                44100 	// Min Sample Rate
+#define SPEAKER_HOST_MAX_SAMPLE_RATE                48000 	// Max Sample Rate
 
-#define SPEAKER_OFFLOAD_MAX_CHANNELS                2       // Max Channels.
-#define SPEAKER_OFFLOAD_MIN_BITS_PER_SAMPLE         16      // Min Bits Per Sample
-#define SPEAKER_OFFLOAD_MAX_BITS_PER_SAMPLE         16      // Max Bits Per Sample
-#define SPEAKER_OFFLOAD_MIN_SAMPLE_RATE             44100   // Min Sample Rate
-#define SPEAKER_OFFLOAD_MAX_SAMPLE_RATE             44100   // Max Sample Rate
 
-static
-KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
+static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
 {
 	{
 		{
@@ -39,8 +26,33 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
 			{
 				WAVE_FORMAT_EXTENSIBLE,
 				2,	// nChannels
-				JJOC_SPK_SAMPLE_RATE,
-				JJOC_SPK_SAMPLE_RATE * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				44100,
+				44100 * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,	// nBlockAlign = nChannel * bitPerSample / 8
+				16,	// bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,	// nChannels
+				48000,
+				48000 * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
 				4,	// nBlockAlign = nChannel * bitPerSample / 8
 				16,	// bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
@@ -52,12 +64,11 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
 	},
 };
 
-static
-MODE_AND_DEFAULT_FORMAT SpeakerHostPinSupportedDeviceModes[] =
+static MODE_AND_DEFAULT_FORMAT SpeakerHostPinSupportedDeviceModes[] =
 {
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
-		&SpeakerHostPinSupportedDeviceFormats[0].DataFormat // 48KHz
+		&SpeakerHostPinSupportedDeviceFormats[1].DataFormat // 48KHz
 	},
 };
 
@@ -84,14 +95,14 @@ static KSDATARANGE_AUDIO SpeakerPinDataRangesStream[] =
 	{ // 0
 		{
 			sizeof(KSDATARANGE_AUDIO),
-			KSDATARANGE_ATTRIBUTES,         // An attributes list follows this data range
-			0,
-			0,
+			KSDATARANGE_ATTRIBUTES, // An attributes list follows this data range
+			0, // SampleSize, This member is ignored.
+			0, // Reserved, Drivers must set this member to zero.
 			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
 			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
 			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
 		},
-		SPEAKER_HOST_MAX_CHANNELS,
+		SPEAKER_DEVICE_MAX_CHANNELS,
 		SPEAKER_HOST_MIN_BITS_PER_SAMPLE,
 		SPEAKER_HOST_MAX_BITS_PER_SAMPLE,
 		SPEAKER_HOST_MIN_SAMPLE_RATE,
@@ -99,15 +110,13 @@ static KSDATARANGE_AUDIO SpeakerPinDataRangesStream[] =
 	},
 };
 
-static
-PKSDATARANGE SpeakerPinDataRangePointersStream[] =
+static PKSDATARANGE SpeakerPinDataRangePointersStream[] =
 {
 	PKSDATARANGE(&SpeakerPinDataRangesStream[0]),
 	PKSDATARANGE(&PinDataRangeAttributeList),
 };
 
-static
-KSDATARANGE SpeakerPinDataRangesBridge[] =
+static KSDATARANGE SpeakerPinDataRangesBridge[] =
 {
 	{
 		sizeof(KSDATARANGE),
@@ -120,8 +129,7 @@ KSDATARANGE SpeakerPinDataRangesBridge[] =
 	}
 };
 
-static
-PKSDATARANGE SpeakerPinDataRangePointersBridge[] =
+static PKSDATARANGE SpeakerPinDataRangePointersBridge[] =
 {
 	&SpeakerPinDataRangesBridge[0]
 };

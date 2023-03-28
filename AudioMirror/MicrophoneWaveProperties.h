@@ -10,24 +10,20 @@
 // Mic in (external: headphone) range.
 //
 
-#define JJOC_MIC_SAMPLE_RATE				48000
-
+#define MICIN_MAX_INPUT_STREAMS             2
 #define MICIN_DEVICE_MAX_CHANNELS           2       // Max Channels.
 #define MICIN_MIN_BITS_PER_SAMPLE_PCM       16      // Min Bits Per Sample
 #define MICIN_MAX_BITS_PER_SAMPLE_PCM       16      // Max Bits Per Sample
-#define MICIN_MIN_SAMPLE_RATE               JJOC_MIC_SAMPLE_RATE	// Min Sample Rate
-#define MICIN_MAX_SAMPLE_RATE               JJOC_MIC_SAMPLE_RATE	// Max Sample Rate
+#define MICIN_MIN_SAMPLE_RATE               44100   // Min Sample Rate
+#define MICIN_MAX_SAMPLE_RATE               48000   // Max Sample Rate
 
-//
-// Max # of pin instances.
-//
-#define MICIN_MAX_INPUT_STREAMS 1
+
 
 //=============================================================================
 static
 KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicInPinSupportedDeviceFormats[] =
 {
-	{ // 1
+	{
 		{
 			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
 			0,
@@ -41,8 +37,33 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicInPinSupportedDeviceFormats[] =
 			{
 				WAVE_FORMAT_EXTENSIBLE,
 				2,	// nChannel
-				JJOC_MIC_SAMPLE_RATE,
-				JJOC_MIC_SAMPLE_RATE * 4,	// JJOC_MIC_SAMPLE_RATE * nBlockAlign
+				44100,
+				44100 * 4,	// JJOC_MIC_SAMPLE_RATE * nBlockAlign
+				4,	// nBlockAlign = nChannel * bitPerSample / 8
+				16,	// bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,	// nChannel
+				48000,
+				48000 * 4,	// JJOC_MIC_SAMPLE_RATE * nBlockAlign
 				4,	// nBlockAlign = nChannel * bitPerSample / 8
 				16,	// bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
@@ -57,24 +78,23 @@ KSDATAFORMAT_WAVEFORMATEXTENSIBLE MicInPinSupportedDeviceFormats[] =
 //
 // Supported modes (only on streaming pins).
 //
-static
-MODE_AND_DEFAULT_FORMAT MicInPinSupportedDeviceModes[] =
+static MODE_AND_DEFAULT_FORMAT MicInPinSupportedDeviceModes[] =
 {
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_RAW,
-		&MicInPinSupportedDeviceFormats[SIZEOF_ARRAY(MicInPinSupportedDeviceFormats) - 1].DataFormat,
+		&MicInPinSupportedDeviceFormats[1].DataFormat,
 	},
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
-		&MicInPinSupportedDeviceFormats[SIZEOF_ARRAY(MicInPinSupportedDeviceFormats) - 1].DataFormat,
+		&MicInPinSupportedDeviceFormats[1].DataFormat,
 	},
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_SPEECH,
-		&MicInPinSupportedDeviceFormats[SIZEOF_ARRAY(MicInPinSupportedDeviceFormats) - 1].DataFormat,
+		&MicInPinSupportedDeviceFormats[1].DataFormat,
 	},
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_COMMUNICATIONS,
-		&MicInPinSupportedDeviceFormats[SIZEOF_ARRAY(MicInPinSupportedDeviceFormats) - 1].DataFormat,
+		&MicInPinSupportedDeviceFormats[1].DataFormat,
 	}
 };
 
@@ -100,8 +120,7 @@ static PIN_DEVICE_FORMATS_AND_MODES MicInPinDeviceFormatsAndModes[] =
 };
 
 //=============================================================================
-static
-KSDATARANGE MicInPinDataRangesBridge[] =
+static KSDATARANGE MicInPinDataRangesBridge[] =
 {
 	{
 		sizeof(KSDATARANGE),
@@ -114,15 +133,13 @@ KSDATARANGE MicInPinDataRangesBridge[] =
 	}
 };
 
-static
-PKSDATARANGE MicInPinDataRangePointersBridge[] =
+static PKSDATARANGE MicInPinDataRangePointersBridge[] =
 {
 	&MicInPinDataRangesBridge[0]
 };
 
 //=============================================================================
-static
-KSDATARANGE_AUDIO MicInPinDataRangesStream[] =
+static KSDATARANGE_AUDIO MicInPinDataRangesStream[] =
 {
 	{
 		{
@@ -197,8 +214,7 @@ PCPIN_DESCRIPTOR MicInWaveMiniportPins[] =
 };
 
 //=============================================================================
-static
-PCNODE_DESCRIPTOR MicInWaveMiniportNodes[] =
+static PCNODE_DESCRIPTOR MicInWaveMiniportNodes[] =
 {
 	// KSNODE_WAVE_ADC
 	{
@@ -210,8 +226,7 @@ PCNODE_DESCRIPTOR MicInWaveMiniportNodes[] =
 };
 
 //=============================================================================
-static
-PCCONNECTION_DESCRIPTOR MicInWaveMiniportConnections[] =
+static PCCONNECTION_DESCRIPTOR MicInWaveMiniportConnections[] =
 {
 	{ PCFILTER_NODE, (int)WaveCapturePins::KSPIN_WAVE_BRIDGE, PCFILTER_NODE, (int)WaveCapturePins::KSPIN_WAVEIN_HOST }
 	/*{ PCFILTER_NODE,    (int)WaveCapturePins::KSPIN_WAVE_BRIDGE,    KSNODE_WAVE_ADC,     1 },
@@ -219,8 +234,7 @@ PCCONNECTION_DESCRIPTOR MicInWaveMiniportConnections[] =
 };
 
 //=============================================================================
-static
-PCPROPERTY_ITEM PropertiesMicInWaveFilter[] =
+static PCPROPERTY_ITEM PropertiesMicInWaveFilter[] =
 {
 	{
 		&KSPROPSETID_Pin,
@@ -239,8 +253,7 @@ PCPROPERTY_ITEM PropertiesMicInWaveFilter[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationMicInWaveFilter, PropertiesMicInWaveFilter);
 
 //=============================================================================
-static
-PCFILTER_DESCRIPTOR MicInWaveMiniportFilterDescriptor =
+static PCFILTER_DESCRIPTOR MicInWaveMiniportFilterDescriptor =
 {
 	0,                                          // Version
 	&AutomationMicInWaveFilter,                 // AutomationTable
