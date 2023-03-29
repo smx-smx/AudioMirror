@@ -2,17 +2,17 @@
 
 #include "Globals.h"
 
-#define SPEAKER_MAX_INPUT_SYSTEM_STREAMS            2
+#define SPEAKER_MAX_INPUT_SYSTEM_STREAMS            8       // 48000, 8000, 11025, 12000, 16000, 22500, 24000, 44100
 #define SPEAKER_DEVICE_MAX_CHANNELS                 2       // Max Channels.
 #define SPEAKER_HOST_MIN_BITS_PER_SAMPLE            16      // Min Bits Per Sample
 #define SPEAKER_HOST_MAX_BITS_PER_SAMPLE            16      // Max Bits Per Sample
-#define SPEAKER_HOST_MIN_SAMPLE_RATE                44100 	// Min Sample Rate
-#define SPEAKER_HOST_MAX_SAMPLE_RATE                48000 	// Max Sample Rate
+#define SPEAKER_HOST_MIN_SAMPLE_RATE                8000    // Min Sample Rate
+#define SPEAKER_HOST_MAX_SAMPLE_RATE                48000   // Max Sample Rate
 
-
+//=============================================================================
 static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] =
 {
-	{
+	{ // 48000
 		{
 			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
 			0,
@@ -25,11 +25,11 @@ static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] 
 		{
 			{
 				WAVE_FORMAT_EXTENSIBLE,
-				2,	// nChannels
-				44100,
-				44100 * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
-				4,	// nBlockAlign = nChannel * bitPerSample / 8
-				16,	// bitPerSample
+				2,  // nChannels
+				48000,
+				48000 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
 			},
 			16,
@@ -37,7 +37,7 @@ static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] 
 			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
 		}
 	},
-	{
+	{ // 8000
 		{
 			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
 			0,
@@ -50,11 +50,161 @@ static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] 
 		{
 			{
 				WAVE_FORMAT_EXTENSIBLE,
-				2,	// nChannels
-				48000,
-				48000 * 4,	// JJOC_SPK_SAMPLE_RATE * nBlockAlign
-				4,	// nBlockAlign = nChannel * bitPerSample / 8
-				16,	// bitPerSample
+				2,  // nChannels
+				8000,
+				8000 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 11025
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,  // nChannels
+				11025,
+				11025 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 12000
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,  // nChannels
+				12000,
+				12000 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 16000
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,  // nChannels
+				16000,
+				16000 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 22050
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2, // nChannels
+				22050,
+				22050 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 24000
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,  // nChannels
+				24000,
+				24000 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
+				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
+			},
+			16,
+			KSAUDIO_SPEAKER_STEREO,
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM)
+		}
+	},
+	{ // 44100
+		{
+			sizeof(KSDATAFORMAT_WAVEFORMATEXTENSIBLE),
+			0,
+			0,
+			0,
+			STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+			STATICGUIDOF(KSDATAFORMAT_SUBTYPE_PCM),
+			STATICGUIDOF(KSDATAFORMAT_SPECIFIER_WAVEFORMATEX)
+		},
+		{
+			{
+				WAVE_FORMAT_EXTENSIBLE,
+				2,  // nChannels
+				44100,
+				44100 * 4, // JJOC_SPK_SAMPLE_RATE * nBlockAlign
+				4,  // nBlockAlign = nChannel * bitPerSample / 8
+				16, // bitPerSample
 				sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)
 			},
 			16,
@@ -64,14 +214,16 @@ static KSDATAFORMAT_WAVEFORMATEXTENSIBLE SpeakerHostPinSupportedDeviceFormats[] 
 	},
 };
 
+// Supported modes (only on streaming pins).
 static MODE_AND_DEFAULT_FORMAT SpeakerHostPinSupportedDeviceModes[] =
 {
 	{
 		STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT,
-		&SpeakerHostPinSupportedDeviceFormats[1].DataFormat // 48KHz
-	},
+		&SpeakerHostPinSupportedDeviceFormats[0].DataFormat // 48KHz
+	}
 };
 
+// The entries here must follow the same order as the filter's pin descriptor array.
 static PIN_DEVICE_FORMATS_AND_MODES SpeakerPinDeviceFormatsAndModes[] =
 {
 	{
@@ -90,9 +242,29 @@ static PIN_DEVICE_FORMATS_AND_MODES SpeakerPinDeviceFormatsAndModes[] =
 	},
 };
 
+//=============================================================================
+static KSDATARANGE SpeakerPinDataRangesBridge[] =
+{
+	{
+		sizeof(KSDATARANGE),
+		0,
+		0,
+		0,
+		STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
+		STATICGUIDOF(KSDATAFORMAT_SUBTYPE_ANALOG),
+		STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
+	}
+};
+
+static PKSDATARANGE SpeakerPinDataRangePointersBridge[] =
+{
+	&SpeakerPinDataRangesBridge[0]
+};
+
+//=============================================================================
 static KSDATARANGE_AUDIO SpeakerPinDataRangesStream[] =
 {
-	{ // 0
+	{
 		{
 			sizeof(KSDATARANGE_AUDIO),
 			KSDATARANGE_ATTRIBUTES, // An attributes list follows this data range
@@ -116,28 +288,10 @@ static PKSDATARANGE SpeakerPinDataRangePointersStream[] =
 	PKSDATARANGE(&PinDataRangeAttributeList),
 };
 
-static KSDATARANGE SpeakerPinDataRangesBridge[] =
-{
-	{
-		sizeof(KSDATARANGE),
-		0,
-		0,
-		0,
-		STATICGUIDOF(KSDATAFORMAT_TYPE_AUDIO),
-		STATICGUIDOF(KSDATAFORMAT_SUBTYPE_ANALOG),
-		STATICGUIDOF(KSDATAFORMAT_SPECIFIER_NONE)
-	}
-};
-
-static PKSDATARANGE SpeakerPinDataRangePointersBridge[] =
-{
-	&SpeakerPinDataRangesBridge[0]
-};
-
+//=============================================================================
 static PCPIN_DESCRIPTOR SpeakerWaveMiniportPins[] =
 {
-	// Wave Out Streaming Pin (Renderer) KSPIN_WAVE_RENDER_SINK_SYSTEM
-	{
+	{ // Wave Out Streaming Pin (Renderer) KSPIN_WAVE_RENDER_SINK_SYSTEM
 		SPEAKER_MAX_INPUT_SYSTEM_STREAMS,
 		SPEAKER_MAX_INPUT_SYSTEM_STREAMS,
 		0,
@@ -156,8 +310,7 @@ static PCPIN_DESCRIPTOR SpeakerWaveMiniportPins[] =
 			0
 		}
 	},
-	// Wave Out Bridge Pin (Renderer) KSPIN_WAVE_RENDER_SOURCE
-	{
+	{ // Wave Out Bridge Pin (Renderer) KSPIN_WAVE_RENDER_SOURCE
 		0,
 		0,
 		0,
@@ -175,9 +328,24 @@ static PCPIN_DESCRIPTOR SpeakerWaveMiniportPins[] =
 			NULL,
 			0
 		}
-	},
+	}
 };
 
+//=============================================================================
+//
+//                   ----------------------------
+//                   |                          |
+//  System Pin   0-->|                          |
+//                   |                          |
+//                   |                          |--> 1 KSPIN_WAVE_RENDER_SOURCE
+//                   |                          |
+//                   ----------------------------
+static PCCONNECTION_DESCRIPTOR SpeakerWaveMiniportConnections[] =
+{
+	{ PCFILTER_NODE, (int)WaveRenderPins::SINK_SYSTEM, PCFILTER_NODE, (int)WaveRenderPins::SOURCE }
+};
+
+//=============================================================================
 static PCPROPERTY_ITEM PropertiesSpeakerWaveFilter[] =
 {
 	{
@@ -191,24 +359,12 @@ static PCPROPERTY_ITEM PropertiesSpeakerWaveFilter[] =
 		KSPROPERTY_PIN_PROPOSEDATAFORMAT2,
 		KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
 		MiniportWaveRT::PropertyHandler_WaveFilter
-	},
+	}
 };
+
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerWaveFilter, PropertiesSpeakerWaveFilter);
 
 //=============================================================================
-//
-//                   ----------------------------      
-//                   |                          |      
-//  System Pin   0-->|                          |
-//                   |      				    |      
-//  |											|--> 1 KSPIN_WAVE_RENDER_SOURCE
-//                   |                          |      
-//                   ----------------------------       
-static PCCONNECTION_DESCRIPTOR SpeakerWaveMiniportConnections[] =
-{
-	{ PCFILTER_NODE,						(int)WaveRenderPins::SINK_SYSTEM,   PCFILTER_NODE,						(int)WaveRenderPins::SOURCE },
-};
-
 static PCFILTER_DESCRIPTOR SpeakerWaveMiniportFilterDescriptor =
 {
 	0,                                              // Version
@@ -217,8 +373,8 @@ static PCFILTER_DESCRIPTOR SpeakerWaveMiniportFilterDescriptor =
 	SIZEOF_ARRAY(SpeakerWaveMiniportPins),          // PinCount
 	SpeakerWaveMiniportPins,                        // Pins
 	sizeof(PCNODE_DESCRIPTOR),                      // NodeSize
-	0,												// NodeCount
-	NULL,											// Nodes
+	0,                                              // NodeCount
+	NULL,                                           // Nodes
 	SIZEOF_ARRAY(SpeakerWaveMiniportConnections),   // ConnectionCount
 	SpeakerWaveMiniportConnections,                 // Connections
 	0,                                              // CategoryCount
