@@ -80,7 +80,7 @@ Return Value:
 	}
 	if (m_RingBuffer)
 	{
-		ExFreePoolWithTag(m_RingBuffer, MINWAVERTSTREAM_POOLTAG);
+		delete m_RingBuffer;
 		m_RingBuffer = NULL;
 	}
 	if (m_pNotificationTimer)
